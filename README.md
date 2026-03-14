@@ -2,20 +2,46 @@
 
 This is my midterm project for Web Technology and Internet. The idea behind it is a system that monitors cryptocurrency transactions to catch fraud and suspicious activity. It tracks wallet behavior, manages users with different roles, and organizes everything by geographic location following Rwanda's administrative structure.
 
-## Entity Relationship Diagram
+## Entity Relationship Diagram (ERD)
 
-I have 10 tables in my database. They fall into two groups: location tables and the main system tables.
+### Location Hierarchy (One-to-Many Relationships)
+```
+Province (code PK, name)
+    ↓ (1:N)
+District (code PK, name, province_code FK)
+    ↓ (1:N)
+Sector (code PK, name, district_code FK)
+    ↓ (1:N)
+Cell (code PK, name, sector_code FK)
+    ↓ (1:N)
+Village (code PK, name, cell_code FK)
+```
 
-For locations, I followed how Rwanda is actually divided administratively. Province is at the top, then it goes down to District, then Sector, then Cell, and finally Village. Each one has a code as its primary key and a name, and each one points to its parent through a foreign key. So District has a province_code foreign key, Sector has a district_code, Cell has a sector_code, and Village has a cell_code. This creates a chain of one-to-many relationships going from Province all the way down to Village.
+### Main System Tables
+```
+User (id PK, name, email, village_code FK → Village)
+    ↓ (1:N)
+Wallet (address PK, type, user_id FK → User)
+    ↓ (1:N)
+Transaction (id PK, amount, timestamp, wallet_address FK → Wallet)
 
-For the main system tables:
-- User has id, name, and email. Each user belongs to a Province (through province_code foreign key). A user can own multiple Wallets and can be assigned multiple Roles.
-- UserProfile stores extra info like bio and avatar URL. It has a one-to-one link to User through a user_id foreign key.
-- Role just has id and name. It connects to User through a many-to-many relationship using a join table called user_role.
-- Wallet represents a crypto wallet with address as its primary key and a type field. It belongs to a User (user_id foreign key) and can have many Transactions.
-- Transaction records individual crypto transfers with id, amount, and timestamp. Each transaction belongs to one Wallet (wallet_address foreign key).
+User (id PK)
+    ↓ (1:1)
+UserProfile (id PK, bio, avatar_url, user_id FK → User)
 
-The reason I set it up this way is so we can track which province a user is from, what wallets they control, what transactions happened on those wallets, and what permissions they have through roles. The location hierarchy is separate but connects to users at the province level.
+User (id PK)
+    ↔ (N:M)
+Role (id PK, name)
+    (via user_role join table)
+```
+
+### Key Relationships Explained
+- **Location Chain**: Province → District → Sector → Cell → Village (Hierarchical One-to-Many).
+- **User Links**: User belongs to Village (Many-to-One), has Profile (One-to-One), owns Wallets (One-to-Many), has Roles (Many-to-Many).
+- **Transactions**: Linked to Wallets (Many-to-One).
+- **Total Tables**: 10 (Province, District, Sector, Cell, Village, User, UserProfile, Role, Wallet, Transaction).
+
+This ERD ensures efficient querying of users by location and tracking of crypto activities.
 
 ## Saving Location
 
