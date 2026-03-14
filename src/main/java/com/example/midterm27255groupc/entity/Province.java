@@ -16,10 +16,6 @@ public class Province {
     @OneToMany(mappedBy = "province")
     private List<District> districts;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "province")
-    private List<User> users;
-
     public Province() {}
 
     public Province(String code, String name) {
@@ -43,11 +39,11 @@ public class Province {
         this.name = name;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<District> getDistricts() {
+        return districts;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setDistricts(List<District> districts) {
+        this.districts = districts;
     }
 }

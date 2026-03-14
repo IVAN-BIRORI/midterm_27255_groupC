@@ -1,6 +1,8 @@
 package com.example.midterm27255groupc.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -9,25 +11,27 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String email;
 
     @ManyToOne
-    @JoinColumn(name = "province_code")
-    private Province province;
+    @JoinColumn(name = "village_code")
+    private Village village;
 
     @OneToOne(mappedBy = "user")
     private UserProfile profile;
 
     @OneToMany(mappedBy = "user")
-    private List<Wallet> wallets;
+    private List<Wallet> wallets = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -35,16 +39,9 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     public User() {}
-
-    public User(Long id, String name, String email, Province province) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.province = province;
-    }
 
     public Long getId() {
         return id;
@@ -70,12 +67,12 @@ public class User {
         this.email = email;
     }
 
-    public Province getProvince() {
-        return province;
+    public Village getVillage() {
+        return village;
     }
 
-    public void setProvince(Province province) {
-        this.province = province;
+    public void setVillage(Village village) {
+        this.village = village;
     }
 
     public UserProfile getProfile() {
